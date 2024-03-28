@@ -1,11 +1,11 @@
 # ROS Configuration Guide
 
-This guide provides steps for configuring ROS on Windows using WSL 2 and Ubuntu 20.04.6 LTS. This includes instructions for setting up ROS 2 using the Iron Irwini release.
+This guide provides steps for configuring ROS on Windows using WSL 2 and Ubuntu 22.04.3 LTS. This includes instructions for setting up ROS 2 using the Iron Irwini release.
 
 ## Prerequisites
 
 - Windows 10 or later
-- Enabled WSL 2 (with Ubuntu 20.04.6 LTS installed)
+- Enabled WSL 2 (with Ubuntu 22.04.3 LTS installed)
 
 ## Steps for Configuration
 
