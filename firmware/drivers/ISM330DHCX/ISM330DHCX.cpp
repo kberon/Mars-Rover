@@ -5,12 +5,18 @@ ISM330DHCX::ISM330DHCX(void) {}
 bool ISM330DHCX::init(void) {
     // Initialize I2C
     //pull pin CS high physically!!
+
+
+    fd = wiringPiI2CSetup(ADDRESS);
+    if(fd == -1) {
+        return false;
+    }   
+
     //accelerometer control: 416 Hz (high performance), 2g, high-resultion = 0
     set_reg(CTRL1_XL, 0x60);
     //gyroscope control: 416 Hz (high performance), 2000 dps, high-resultion = 0
     set_reg(CTRL2_G, 0x60);
 
-    fd = wiringPiI2CSetup(ADDRESS);
     
     return true;
 }
