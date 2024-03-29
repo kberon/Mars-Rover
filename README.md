@@ -15,4 +15,6 @@ Our high level software team has finished configuring ROS for our external compu
 <br>
 Additionally, the team has dived into the battery monitor board design, and details of the future voltage dividing procedure.<br>
 <br>
-The team has also spent a great deal of time researching and buying parts. Included in the documentation directory are details on that procedure, especailly for the motor selection
+The team has also spent a great deal of time researching and buying parts. Included in the documentation directory are details on that procedure, especailly for the motor selection<br>
+<br>
+We encourage you to explore the repo and read the subdirectory README's and the different available documentation
