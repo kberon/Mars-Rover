@@ -1,2 +1,2 @@
 all:
-	gcc -o test -L../wiringPi -lwiringPi example.cpp
+	g++ -o example example.cpp -l wiringPi
