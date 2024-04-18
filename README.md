@@ -23,3 +23,10 @@ We encourage you to explore the repo and read the subdirectory README's and the 
 Firmware bugs are as follows: as of right now software PWM is extremely buggy, however a warning is presented when they need to be utilized by our motor drivers.<br>
 We additonally have some minor bugs in our IMU and BME280 drivers, with functionality being questionable due to a lack of dev boards currently being on hand, and not having the IMU and DME280 <br>
 to interact with directly yet.
+
+## Raspberry Pi Control
+On UF wifi, use 
+```
+ssh raspberry@10.138.203.107
+```
+to log into the raspberry pi. The password is pi.pi
