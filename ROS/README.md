@@ -13,3 +13,13 @@ This guide provides steps for configuring ROS on Windows using WSL 2 and Ubuntu 
    wsl -l -v
 2. **Follow intruction guide** Follow this guide: https://docs.ros.org/en/iron/Installation/Alternatives/Ubuntu-Development-Setup.html up until Next Steps (if the install development tools section does not work, try sudo apt update && sudo apt install ros-dev-tools instead)
 
+
+## Docker
+To make the process of building our ROS2 container simpler I have created a dockerfile and accompanying docker-compose.yml file. These two files help us build and then run the ROS2 docker container.
+
+If you are not using the build script, you can use these commands to build and create the docker container.
+
+1. cd into the docker directory
+2. Enter in this command to build the docerfile "docker build -t ros2 ."
+3. Use this command to run the container: "docker-compose up -d"
+4. To connect to the container enter this into the terminal: "docker exec -it docker_ros2_1 bash"
