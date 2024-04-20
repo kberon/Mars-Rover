@@ -16,3 +16,12 @@ spi = busio.SPI(board.SCLK, board.MOSI, board.MISO)
 print("SPI ok!")
 
 print("done!")
+
+import time
+from adafruit_motorkit import MotorKit
+import sys
+
+kit2 = MotorKit(address=0x61)
+
+#kit2.motor1.throttle = 0.0
+kit2.motor4.throttle = 0.3

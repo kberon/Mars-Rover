@@ -8,19 +8,24 @@ import time
 from adafruit_motorkit import MotorKit
 import sys
 
-kit = MotorKit()
+
 
 '''
-
+kit11:
 MOTOR 1: Front right, proper forwards
 MOTOR 2: Back Right, proper
 MOTOR 3: Back left, inverted
 MOTOR 4: Front left, inverted
 
+kit12:
+MOTOR 1: left, proper
+MOTOR 4: right, inverted
+
 '''
 
 def main():
-    kit = MotorKit()
+    kit1 = MotorKit()
+    kit2 = MotorKit(address=0x61)
     
     if len(sys.argv) != 2:
         print("Usage: python script.py <direction>")
@@ -30,37 +35,49 @@ def main():
 
     if direction == "w": #straight
         print("Heading forwards")
-        kit.motor1.throttle = 0.3
-        kit.motor2.throttle = 0.3
-        kit.motor3.throttle = -0.3
-        kit.motor4.throttle = -0.3
+        kit1.motor1.throttle = 0.9
+        kit1.motor2.throttle = 0.9
+        kit1.motor3.throttle = -0.9
+        kit1.motor4.throttle = -0.9
+        kit2.motor1.throttle = 0.9
+        kit2.motor4.throttle = -0.9
+        
         
     elif direction == "a": #left
         print("Heading left") 
-        kit.motor1.throttle = 0.3
-        kit.motor2.throttle = 0.3
-        kit.motor3.throttle = 0.2
-        kit.motor4.throttle = 0.2
+        kit1.motor1.throttle = 0.3
+        kit1.motor2.throttle = 0.3
+        kit1.motor3.throttle = 0.2
+        kit1.motor4.throttle = 0.2
+        kit2.motor1.throttle = 0.3
+        kit2.motor4.throttle = -0.2
         
     elif direction == "s":#backwards
         print("Heading backwards")
-        kit.motor1.throttle = -0.3
-        kit.motor2.throttle = -0.3
-        kit.motor3.throttle = 0.3
-        kit.motor4.throttle = 0.3
+        kit1.motor1.throttle = -0.4
+        kit1.motor2.throttle = -0.4
+        kit1.motor3.throttle = 0.4
+        kit1.motor4.throttle = 0.4
+        kit2.motor1.throttle = -0.4
+        kit2.motor4.throttle = 0.4
+        
         
     elif direction == "d":#right
         print("Heading right")
-        kit.motor1.throttle = -0.2
-        kit.motor2.throttle = -0.2
-        kit.motor3.throttle = -0.3
-        kit.motor4.throttle = -0.3
+        kit1.motor1.throttle = -0.2
+        kit1.motor2.throttle = -0.2
+        kit1.motor3.throttle = -0.3
+        kit1.motor4.throttle = -0.3
+        kit2.motor1.throttle = -0.2
+        kit2.motor4.throttle = 0.3
         
     elif direction == "e":#stop
-        kit.motor1.throttle = 0
-        kit.motor2.throttle = 0
-        kit.motor3.throttle = 0
-        kit.motor4.throttle = 0
+        kit1.motor1.throttle = 0
+        kit1.motor2.throttle = 0
+        kit1.motor3.throttle = 0
+        kit1.motor4.throttle = 0
+        kit2.motor1.throttle = 0
+        kit2.motor4.throttle = 0
         
 
 if __name__ == "__main__":

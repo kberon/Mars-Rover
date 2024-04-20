@@ -10,13 +10,11 @@ using namespace std;
 
 class ISM330DHCX {
     public:
-        const uint8_t ADDRESS = 0x6B; //might need to change to 60 or 6A
+        const uint8_t ADDRESS = 0x6A;
 
         const uint8_t CTRL1_XL = 0x10;
         const uint8_t CTRL2_G = 0x11;
 
-        const uint8_t OUT_TEMP_L = 0x20;
-        const uint8_t OUT_TEMP_H = 0x21;
         
         const uint8_t OUTX_L_G = 0x22;
         const uint8_t OUTX_H_G = 0x23;
@@ -33,14 +31,26 @@ class ISM330DHCX {
         const uint8_t OUTZ_H_A = 0x2D;
 
         int fd;
+
+        struct GyroData {
+            uint16_t x;
+            uint16_t y;
+            uint16_t z;
+        };
+
+        struct AccelData {
+            uint16_t x;
+            uint16_t y;
+            uint16_t z;
+        };
         
         ISM330DHCX(void);
         bool init(void);
         void set_reg(uint8_t reg, uint8_t val);
         uint8_t read_reg(uint8_t reg);
-        uint16_t get_temp(void);
-        uint16_t* get_gyro(void);
-        uint16_t* get_accel(void);
+        GyroData get_gyro(void);
+        AccelData get_accel(void);
+    
 
 
 };

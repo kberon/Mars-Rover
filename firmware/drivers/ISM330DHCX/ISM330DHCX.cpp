@@ -1,12 +1,9 @@
 #include "ISM330DHCX.h"
+#include <wiringPiI2C.h>
 
 ISM330DHCX::ISM330DHCX(void) {}
 
 bool ISM330DHCX::init(void) {
-    // Initialize I2C
-    //pull pin CS high physically!!
-
-
     fd = wiringPiI2CSetup(ADDRESS);
     if(fd == -1) {
         return false;
@@ -32,22 +29,19 @@ uint8_t ISM330DHCX::read_reg(uint8_t reg) {
     return wiringPiI2CReadReg8(fd, reg);
 }
 
-uint16_t ISM330DHCX::get_temp(void) {    
-    return read_reg(OUT_TEMP_L) | (read_reg(OUT_TEMP_H) << 8);
-}
 
-uint16_t* ISM330DHCX::get_gyro(void) {
-    uint16_t gyro[3];
-    gyro[0] = read_reg(OUTX_L_G) | (read_reg(OUTX_H_G) << 8);
-    gyro[1] = read_reg(OUTY_L_G) | (read_reg(OUTY_H_G) << 8);
-    gyro[2] = read_reg(OUTZ_L_G) | (read_reg(OUTZ_H_G) << 8);
+ISM330DHCX::GyroData ISM330DHCX::get_gyro(void) {
+    GyroData gyro;
+    gyro.x = read_reg(OUTX_L_G) | (read_reg(OUTX_H_G) << 8);
+    gyro.y = read_reg(OUTY_L_G) | (read_reg(OUTY_H_G) << 8);
+    gyro.z = read_reg(OUTZ_L_G) | (read_reg(OUTZ_H_G) << 8);
     return gyro;
 }
 
-uint16_t* ISM330DHCX::get_accel(void) {
-    uint16_t accel[3];
-    accel[0] = read_reg(OUTX_L_A) | (read_reg(OUTX_H_A) << 8);
-    accel[1] = read_reg(OUTY_L_A) | (read_reg(OUTY_H_A) << 8);
-    accel[2] = read_reg(OUTZ_L_A) | (read_reg(OUTZ_H_A) << 8);
+ISM330DHCX::AccelData ISM330DHCX::get_accel(void) {
+    AccelData accel;
+    accel.x = read_reg(OUTX_L_A) | (read_reg(OUTX_H_A) << 8);
+    accel.y = read_reg(OUTY_L_A) | (read_reg(OUTY_H_A) << 8);
+    accel.z = read_reg(OUTZ_L_A) | (read_reg(OUTZ_H_A) << 8);
     return accel;
 }
