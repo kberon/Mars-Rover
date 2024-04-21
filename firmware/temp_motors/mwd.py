@@ -45,12 +45,12 @@ def main():
         
     elif direction == "a": #left
         print("Heading left") 
-        kit1.motor1.throttle = 0.3
-        kit1.motor2.throttle = 0.3
-        kit1.motor3.throttle = 0.2
-        kit1.motor4.throttle = 0.2
-        kit2.motor1.throttle = -0.3
-        kit2.motor4.throttle = -0.2
+        kit1.motor1.throttle = 0.5
+        kit1.motor2.throttle = 0.5
+        kit1.motor3.throttle = 0.5
+        kit1.motor4.throttle = 0.5
+        kit2.motor1.throttle = -0.5
+        kit2.motor4.throttle = -0.5
         
     elif direction == "s":#backwards
         print("Heading backwards")
@@ -64,12 +64,12 @@ def main():
         
     elif direction == "d":#right
         print("Heading right")
-        kit1.motor1.throttle = -0.2
-        kit1.motor2.throttle = -0.2
-        kit1.motor3.throttle = -0.3
-        kit1.motor4.throttle = -0.3
-        kit2.motor1.throttle = -0.2
-        kit2.motor4.throttle = 0.3
+        kit1.motor1.throttle = -0.5
+        kit1.motor2.throttle = -0.5
+        kit1.motor3.throttle = -0.5
+        kit1.motor4.throttle = -0.5
+        kit2.motor1.throttle = 0.4
+        kit2.motor4.throttle = 0.5
         
     elif direction == "e":#stop
         kit1.motor1.throttle = 0
