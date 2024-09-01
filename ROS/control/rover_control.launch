@@ -4,4 +4,5 @@
     <node pkg="object_detection_pkg" type="motor_control.py" name="motor_control_node" output="screen"/>
     <node pkg="object_detection_pkg" type="keyboard_control.py" name="keyboard_control_node" output="screen"/>
     <node pkg="object_detection_pkg" type="telemetry_node.py" name="telemetry_node" output="screen"/>
+    <node pkg="object_detection_pkg" type="lidar_proximity.py" name="lidar_proximity_node" output="screen"/>
 </launch>
