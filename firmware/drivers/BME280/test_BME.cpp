@@ -14,9 +14,10 @@ int main(){
     }
 
     while(1){
-        printf("Temperature: %f C \n", bme.get_temp());
-        printf("Humidity: %f %\n", bme.get_hum());
-        printf("Pressure: %f hPa \n", bme.get_press()/100.0);
+        int32_t T = bme.get_temp();
+        printf("Temperature is: %d.%d C\n", T/100, T - (T/100)*100);
+        printf("Humidity: %3f %RH\n", bme.get_hum());
+        printf("Pressure: %2f Pa \n", bme.get_press());
         delay(1000);
     }
 

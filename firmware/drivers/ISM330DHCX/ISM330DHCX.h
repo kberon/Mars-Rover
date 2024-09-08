@@ -11,6 +11,7 @@ using namespace std;
 class ISM330DHCX {
     public:
         const uint8_t ADDRESS = 0x6A;
+        const uint8_t STATUS = 0x1E;
 
         const uint8_t CTRL1_XL = 0x10;
         const uint8_t CTRL2_G = 0x11;
@@ -32,7 +33,7 @@ class ISM330DHCX {
 
         int fd;
         float accel_range = .061; //2g: .061, 4: .122, 8: .244, 16: .488
-        float gyro_range = 70; //125: 4.375, 250: 8.75, 500: 17.5, 1000: 35, 2000: 70
+        float gyro_range = .061; //125: 4.375, 250: 8.75, 500: 17.5, 1000: 35, 2000: 70
         float milli_g_to_accel = .00980665;
 
         struct GyroData {
@@ -54,8 +55,6 @@ class ISM330DHCX {
         GyroData get_gyro(void);
         AccelData get_accel(void);
     
-
-
 };
 
 #endif

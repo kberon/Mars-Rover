@@ -9,12 +9,15 @@ int main(){
 
     //read all sensors
     while(1){
-        printf("Temperature: %f C \n", bme.get_temp());
-        printf("Humidity: %f %\n", bme.get_hum());
-        printf("Pressure: %f hPa \n", bme.get_press()/100.0);
-        printf("Gyro: [%f, %f, %f] rads/s\n", imu.get_gyro().x, imu.get_gyro().y, imu.get_gyro().z);
-        printf("Accel: [%f, %f, %f] m/s^2\n", imu.get_accel().x, imu.get_accel().y, imu.get_accel().z);
-        delay(1000);
+        int32_t T = bme.get_temp();
+        printf("Temperature is: %d.%d C\n", T/100, T - (T/100)*100);
+        printf("Humidity: %.3f %RH\n", bme.get_hum());
+        printf("Pressure: %.2f Pa \n", bme.get_press());
+        ISM330DHCX::GyroData gyro = imu.get_gyro();
+        printf("Gyro: [%.2f, %.2f, %.2f] rads/s\n", gyro.x, gyro.y, gyro.z);
+        ISM330DHCX::AccelData accel = imu.get_accel();
+        printf("Accel: [%.2f, %.2f, %.2f] m/s^2\n", accel.x, accel.y, accel.z);
+        delay(3000);
     }
 
     return 0;
