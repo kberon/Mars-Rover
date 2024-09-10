@@ -1,7 +1,9 @@
+#include <iostream>
+#include <iomanip> // for std::fixed and std::setprecision
 #include "ISM330DHCX/ISM330DHCX.h"
 #include "BME280/BME280.h"
 
-int main(){
+int main() {
     BME280 bme = BME280();
     ISM330DHCX imu = ISM330DHCX();
     bme.init();
@@ -21,5 +23,5 @@ int main(){
     }
 
     return 0;
-
 }
+
