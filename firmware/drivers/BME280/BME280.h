@@ -71,8 +71,8 @@ class BME280 {
         uint8_t dig_H1;
         int16_t dig_H2;
         uint8_t dig_H3;
-        int8_t dig_H4;
-        int8_t dig_H5;
+        int16_t dig_H4;
+        int16_t dig_H5;
         int8_t dig_H6;
         
         int fd;
@@ -82,12 +82,8 @@ class BME280 {
         BME280(void);
         bool init(void);
         void set_reg(uint8_t reg, uint8_t val);
-        uint8_t read_unsigned8(uint8_t reg);
-        int8_t read_signed8(uint8_t reg);
-        uint16_t read_unsigned16(uint8_t reg);
-        int16_t read_signed16(uint8_t reg);
         uint8_t read_reg(uint8_t reg);
-        float get_temp(void);
+        int32_t get_temp(void);
         float get_hum(void);
         float get_press(void);
 
