@@ -20,6 +20,5 @@ The team has also spent a great deal of time researching and buying parts. Inclu
 We encourage you to explore the repo and read the subdirectory README's and the different available documentation
 
 ## Bugs
-Firmware bugs are as follows: as of right now software PWM is extremely buggy, however a warning is presented when they need to be utilized by our motor drivers.<br>
-We additonally have some minor bugs in our IMU and BME280 drivers, with functionality being questionable due to a lack of dev boards currently being on hand, and not having the IMU and DME280 <br>
-to interact with directly yet.
+Firmware bugs are as follows: PWM through DMA drivers needs to become a persistant object to capture memory leaks - otherwise causes issues when run multiple times<br>
+Our sonar modules work independently, but need some kind of daisychaning or internal delays to prevent interference with one another.
