@@ -3,7 +3,7 @@ from evdev import InputDevice, categorize, ecodes
 
 print_log = False
 
-# Change to the correct event path for your controller
+# Confirm path for controller with: sudo evtest
 device_path = '/dev/input/event4'  
 controller = InputDevice(device_path)
 
