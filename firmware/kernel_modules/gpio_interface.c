@@ -6,6 +6,17 @@
 #include <linux/ktime.h>
 #include <linux/kobject.h>
 #include <linux/string.h>
+#include <linux/kernel.h>
+#include <linux/fs.h>
+#include <linux/uaccess.h>
+#include <linux/delay.h>
+#include <linux/workqueue.h>
+
+
+#define FILENAME "/home/raspberry/Mars-Rover/firmware/kernel_interrupt_logs.txt"
+
+struct task_struct *task;
+s64 time_interval = 0;
 
 //gpio 17
 
@@ -20,6 +31,29 @@ s64 time_first_trigger;
 s64 time_second_trigger;
 bool first_trigger = 1;
 
+static struct workqueue_struct *my_wq;
+static struct work_struct my_work;
+
+void log_time_interval(struct work_struct *work) {
+    char msg[100];
+    ssize_t ret;
+    loff_t pos = 0;
+
+    struct file* file = filp_open(FILENAME, O_WRONLY | O_CREAT | O_APPEND, 0644);
+    if (IS_ERR(file)) {
+        pr_err("Error opening file: %ld\n", PTR_ERR(file));
+        return;
+    }
+
+    snprintf(msg, sizeof(msg), "Interrupt was triggered and ISR was called Time between two: %lld\n", time_interval);
+    ret = kernel_write(file, msg, strlen(msg), &pos);
+    if (ret < 0) {
+        pr_err("Error writing to file: %ld\n", ret);
+    }
+
+    filp_close(file, NULL);
+}
+
 //ISR
 static irqreturn_t gpio_irq_handler(int irq, void *dev_id)
 {
@@ -31,8 +65,16 @@ static irqreturn_t gpio_irq_handler(int irq, void *dev_id)
 	else
 	{
 	time_second_trigger = ktime_to_ns(ktime_get());
+    time_interval = time_second_trigger - time_first_trigger;
 	printk("Interrupt was triggered and ISR was called Time between two: %lld\n",time_second_trigger-time_first_trigger);
-	first_trigger = !first_trigger;
+	
+    char msg[100];
+    ssize_t ret;
+    loff_t pos = 0;
+
+	queue_work(my_wq, &my_work);
+
+    first_trigger = !first_trigger;
 	}
 	return IRQ_HANDLED;
 }
@@ -43,7 +85,14 @@ static irqreturn_t gpio_irq_handler(int irq, void *dev_id)
 static int __init my_init(void) {
 	printk("Initiating gpio interrupt...\n");
 
-	//setup GPIO pin
+	my_wq = create_singlethread_workqueue("my_workqueue");
+    if (!my_wq) {
+        printk("Failed to create workqueue\n");
+        return -ENOMEM;
+    }
+    INIT_WORK(&my_work, log_time_interval);
+
+    //setup GPIO pin
 	//cat /sys/kernel/debug/gpio tells you which number linux uses to reference.
 	int gpio_stat = gpio_request(529, "rpi-gpio-17");
 	if(gpio_stat == -EBUSY)
@@ -86,6 +135,8 @@ static int __init my_init(void) {
  */
 static void __exit my_exit(void) {
 	printk("GPIO_IRQ: unloading\n");
+	flush_workqueue(my_wq);
+    destroy_workqueue(my_wq);
 	free_irq(irq_number,NULL);
 	gpio_free(529);
 }

@@ -35,30 +35,18 @@ MODULE_INFO(retpoline, "Y");
 
 static const struct modversion_info ____versions[]
 __used __section("__versions") = {
+	{ 0x122c3a7e, "_printk" },
 	{ 0xdcb764ad, "memset" },
 	{ 0xa6566a8a, "filp_open" },
 	{ 0x656e4a6e, "snprintf" },
 	{ 0x98cf60b3, "strlen" },
 	{ 0x729292f6, "kernel_write" },
 	{ 0x8e54dcab, "filp_close" },
-	{ 0x122c3a7e, "_printk" },
 	{ 0xf0fdf6cb, "__stack_chk_fail" },
-	{ 0x9166fc03, "__flush_workqueue" },
-	{ 0x8c03d20c, "destroy_workqueue" },
-	{ 0xc1514a3b, "free_irq" },
-	{ 0xfe990052, "gpio_free" },
-	{ 0xb43f9365, "ktime_get" },
-	{ 0xc5b6f236, "queue_work_on" },
-	{ 0x49cd25ed, "alloc_workqueue" },
-	{ 0x47229b5c, "gpio_request" },
-	{ 0x1581d08d, "gpio_to_desc" },
-	{ 0x1519c0cc, "gpiod_direction_input" },
-	{ 0x1c691234, "gpiod_to_irq" },
-	{ 0x92d5838e, "request_threaded_irq" },
 	{ 0xe478ef45, "module_layout" },
 };
 
 MODULE_INFO(depends, "");
 
 
-MODULE_INFO(srcversion, "4BB429AB709519848EF7A5E");
+MODULE_INFO(srcversion, "0D4D17F784DE0810878D5D7");
