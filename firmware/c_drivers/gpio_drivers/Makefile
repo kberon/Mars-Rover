@@ -1,2 +1,3 @@
 all:
-	c++ gpio_drivers.cpp -o gpio_test
+	c++ -c gpio_drivers.cpp
+	ar rcs libgpio_drivers.a gpio_drivers.o

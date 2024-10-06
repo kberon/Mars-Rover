@@ -10,16 +10,10 @@ DMAMemHandle *dma_cbs;// = dma_malloc(sizeof(block_one)*num_control_blocks);
 DMAMemHandle *source_info;// = dma_malloc(sizeof(all_on));
 DMAMemHandle *source_info2;// = dma_malloc(sizeof(all_off));
 uint32_t num_control_blocks;
-//uint32_t bus_address_on;
+uint32_t bus_address_on;
 uint32_t bus_address_off;
-//uint32_t reserved[20] = {};
-
-typedef struct {
-    bool reserved_me;
-    uint32_t pin;
-    uint32_t start;
-    uint32_t end;
-} pin_container;
+uint32_t reserved[20] = {};
+uint32_t num_reserved = 0;
 
 
 uint32_t block_one[8] =
@@ -35,19 +29,12 @@ uint32_t block_one[8] =
 };
 
 public:
-uint32_t num_reserved = 0;
-pin_container reserved[20];
-void init_data();
-void turn_off();
 dma_handler(uint8_t on_block, uint8_t num_blocks_f,uint32_t dma_num,uint32_t pin_number);
 void print_all_cbs(uint32_t num_control_blocks, uint32_t* cb_start);
 void pwm_dma(uint8_t on_block, uint8_t num_blocks_f, uint32_t dma_num,uint32_t pin_number);
 void initiate_dma_transfer(uint32_t* dma_mem, uint32_t first_cb_address, uint32_t dma_num);
 void reset_dma(uint32_t* dma_mem, uint32_t dma_num);
-void modify_blocks(uint8_t on_block, uint8_t num_blocks_f,uint32_t pin_number);
-void clear_block(uint8_t pin_numer);
-uint32_t find_index();
-~dma_handler();
+void modify_blocks(uint8_t on_block, uint8_t num_blocks_f);
 };
 
 
