@@ -23,3 +23,10 @@ We encourage you to explore the repo and read the subdirectory README's and the 
 ## Bugs
 Firmware bugs are as follows: PWM through DMA drivers needs to become a persistant object to capture memory leaks - otherwise causes issues when run multiple times<br>
 Our sonar modules work independently, but need some kind of daisychaning or internal delays to prevent interference with one another.
+
+## Set up to run:
+1. Load the gpio_interface module for PWM
+```
+cd /Mars-Rover/firmware/kernel_modules/
+sudo insmod gpio_interface.ko
+```

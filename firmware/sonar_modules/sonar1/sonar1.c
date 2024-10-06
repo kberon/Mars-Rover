@@ -13,7 +13,7 @@
 #include <linux/workqueue.h>
 
 
-#define FILENAME "/home/raspberry/Mars-Rover/firmware/kernel_interrupt_logs.txt"
+#define FILENAME "/home/raspberry/Mars-Rover/firmware/sonar1.txt"
 
 struct task_struct *task;
 s64 time_interval = 0;
@@ -39,7 +39,7 @@ void log_time_interval(struct work_struct *work) {
     ssize_t ret;
     loff_t pos = 0;
 
-    struct file* file = filp_open(FILENAME, O_WRONLY | O_CREAT | O_APPEND, 0644);
+    struct file* file = filp_open(FILENAME, O_WRONLY | O_CREAT | O_TRUNC, 0644);
     if (IS_ERR(file)) {
         pr_err("Error opening file: %ld\n", PTR_ERR(file));
         return;
@@ -66,11 +66,7 @@ static irqreturn_t gpio_irq_handler(int irq, void *dev_id)
 	{
 	time_second_trigger = ktime_to_ns(ktime_get());
     time_interval = time_second_trigger - time_first_trigger;
-	printk("Interrupt was triggered and ISR was called Time between two: %lld\n",time_second_trigger-time_first_trigger);
-	
-    char msg[100];
-    ssize_t ret;
-    loff_t pos = 0;
+	printk("Interrupt was triggered and ISR was called Time between two: %lld\n",((time_second_trigger-time_first_trigger) / 1000)/ 58); //us/58 = cm
 
 	queue_work(my_wq, &my_work);
 
