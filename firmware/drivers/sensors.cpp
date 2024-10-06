@@ -4,6 +4,8 @@
 #include <thread>
 #include <atomic>
 #include <unistd.h>
+#include <iostream>
+#include <iomanip> // for std::fixed and std::setprecision
 #include "ISM330DHCX/ISM330DHCX.h"
 #include "BME280/BME280.h"
 
@@ -88,7 +90,6 @@ void update_camera_feed() {
         gtk_main_iteration_do(FALSE);
         usleep(100000);  // Sleep for 100 milliseconds (~10 FPS)
     }
-
     camera.release();
 }
 

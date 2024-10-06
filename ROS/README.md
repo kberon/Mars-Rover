@@ -20,6 +20,13 @@ To make the process of building our ROS2 container simpler I have created a dock
 If you are not using the build script, you can use these commands to build and create the docker container.
 
 1. cd into the docker directory
-2. Enter in this command to build the docerfile "docker build -t ros2 ."
+2. Enter in this command to build the docerfile "docker build -t ros2 ." *Does not necessarily need to be rebuilt unless dockerfile or docker-compose.yml is altered.*
 3. Use this command to run the container: "docker-compose up -d"
 4. To connect to the container enter this into the terminal: "docker exec -it docker_ros2_1 bash"
+
+## More Helpful Commands
+
+- List all running containers: "docker ps"
+- Stop the specific container: "docker stop CONTAINER_ID"
+- Get node list: "ros2 node list"
+- Get package list: "ros2 pkg list"
