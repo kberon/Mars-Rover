@@ -1,4 +1,3 @@
-#include <gtk/gtk.h>
 #include <opencv2/opencv.hpp>
 #include <string>
 #include <thread>
@@ -6,6 +5,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <iomanip> // for std::fixed and std::setprecision
+#include <gtk/gtk.h>
 #include "ISM330DHCX/ISM330DHCX.h"
 #include "BME280/BME280.h"
 
@@ -13,7 +13,78 @@
 GtkWidget *image_widget;
 std::atomic<bool> running(true);
 
-// Function to capture frames from the camera and overlay sensor data
+// Function to detect and print the average color of the most significant object, and draw the detection on the frame
+void detect_and_draw_objects(cv::Mat& frame) {
+    cv::Mat gray, blurred, edged;
+    
+    // Convert to grayscale and apply GaussianBlur to reduce noise
+    cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
+    cv::GaussianBlur(gray, gray, cv::Size(5, 5), 0);
+
+    // Detect edges using Canny edge detection
+    cv::Canny(gray, edged, 50, 150);
+
+    // Find contours (objects) and hierarchy for filtering outer contours
+    std::vector<std::vector<cv::Point>> contours;
+    std::vector<cv::Vec4i> hierarchy;
+    cv::findContours(edged, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
+
+    // Variables to track the largest contour (most significant object)
+    double max_area = 0;
+    int largest_contour_index = -1;
+
+    // Iterate over contours to find the largest one
+    for (size_t i = 0; i < contours.size(); ++i) {
+        double area = cv::contourArea(contours[i]);
+
+        // Ensure the contour is of a reasonable size to avoid noise
+        if (area > 500 && area > max_area) {
+            max_area = area;
+            largest_contour_index = i;
+        }
+    }
+
+    if (largest_contour_index != -1) {
+        // Get the bounding rectangle of the largest contour
+        cv::Rect bounding_box = cv::boundingRect(contours[largest_contour_index]);
+
+        // Draw the bounding box on the frame
+        cv::rectangle(frame, bounding_box, cv::Scalar(0, 255, 0), 2);  // Green bounding box
+
+        // Crop the detected object from the frame
+        cv::Mat object = frame(bounding_box);
+
+        // Calculate the average color of the object
+        cv::Scalar avg_color = cv::mean(object);
+
+        double blue = avg_color[0];
+        double green = avg_color[1];
+        double red = avg_color[2];
+
+        std::string dominant_color;
+
+        // Determine the dominant color by comparing RGB values
+        if (red > green && red > blue) {
+            dominant_color = "Red";
+        } else if (green > red && green > blue) {
+            dominant_color = "Green";
+        } else if (blue > red && blue > green) {
+            dominant_color = "Blue";
+        } else {
+            dominant_color = "Undetermined/Gray";
+        }
+
+        // Print the color and RGB values to the terminal
+        std::cout << "Dominant Color: " << dominant_color
+                  << " (R: " << std::fixed << std::setprecision(2) << red
+                  << ", G: " << green << ", B: " << blue << ")"
+                  << std::endl;
+    } else {
+        std::cout << "No significant object detected." << std::endl;
+    }
+}
+
+// Function to capture frames from the camera, analyze object color, and display sensor data
 void update_camera_feed() {
     cv::VideoCapture camera(0);
     if (!camera.isOpened()) {
@@ -68,6 +139,9 @@ void update_camera_feed() {
         cv::putText(frame, gyro_text, cv::Point(20, y_offset + 75), font, 0.4, text_color, 1);
         cv::putText(frame, accel_text, cv::Point(20, y_offset + 100), font, 0.4, text_color, 1);
 
+        // Detect objects and draw bounding boxes on the frame
+        detect_and_draw_objects(frame);
+
         // Convert OpenCV Mat to GdkPixbuf to display in GTK
         cv::cvtColor(frame, frame, cv::COLOR_BGR2RGB);  // Convert to RGB
         GdkPixbuf *pixbuf = gdk_pixbuf_new_from_data(
@@ -103,9 +177,9 @@ int main(int argc, char *argv[]) {
     gtk_init(&argc, &argv);
 
     GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_title(GTK_WINDOW(window), "Camera Feed with Sensor Data");
+    gtk_window_set_title(GTK_WINDOW(window), "Camera Feed with Object Detection and Sensor Data");
     
-    // Set window size to 480x360 (slightly larger)
+    // Set window size to 480x360
     gtk_window_set_default_size(GTK_WINDOW(window), 480, 360);
     
     g_signal_connect(window, "destroy", G_CALLBACK(on_window_destroy), NULL);
