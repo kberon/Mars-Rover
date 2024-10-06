@@ -1,3 +1,0 @@
-[console_scripts]
-rover_controller = rover_controller.rover_controller:main
-
