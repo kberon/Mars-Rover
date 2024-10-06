@@ -30,3 +30,50 @@ Our sonar modules work independently, but need some kind of daisychaning or inte
 cd /Mars-Rover/firmware/kernel_modules/
 sudo insmod gpio_interface.ko
 ```
+
+## Installation:
+1. Clone our repo
+```
+git clone https://github.com/kberon/Mars-Rover.git
+```
+2. Instantiate the kernel modules on start up
+```
+sudo nano /etc/systemd/system/load_custom_modules.service
+```
+In that file write:
+```
+[Unit]
+Description=Load Custom Sonar Kernel Modules
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/sbin/insmod /home/raspberry/Mars-Rover/firmware/sonar_modules/sonar1/sonar1.ko
+ExecStart=/sbin/insmod /home/raspberry/Mars-Rover/firmware/sonar_modules/sonar2/sonar2.ko
+ExecStart=/sbin/insmod /home/raspberry/Mars-Rover/firmware/sonar_modules/sonar3/sonar3.ko
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+```
+Save the file and run the following commands:
+```
+sudo systemctl daemon-reload
+sudo systemctl enable load_custom_modules.service
+```
+
+3. For the sensor setup, we will need to install the WiringPi library
+```
+cd Mars-Rover/firmware/drivers
+git clone https://github.com/WiringPi/WiringPi.git
+cd WiringPi
+./build debian
+sudo dpkg -i debian-template/wiringpi_3.10_arm64.deb
+```
+4. Docker setup
+5. To run our camera + sensors executable:
+```
+sudo apt-get install libgtk-3-dev
+sudo apt-get install libopencv-dev
+sudo apt install python3-opencv
+```
