@@ -45,7 +45,7 @@ void log_time_interval(struct work_struct *work) {
         return;
     }
 
-    snprintf(msg, sizeof(msg), "Interrupt was triggered and ISR was called Time between two: %lld\n", time_interval);
+    snprintf(msg, sizeof(msg), "%lld", time_interval);
     ret = kernel_write(file, msg, strlen(msg), &pos);
     if (ret < 0) {
         pr_err("Error writing to file: %ld\n", ret);
@@ -65,8 +65,8 @@ static irqreturn_t gpio_irq_handler(int irq, void *dev_id)
 	else
 	{
 	time_second_trigger = ktime_to_ns(ktime_get());
-    time_interval = time_second_trigger - time_first_trigger;
-	printk("Interrupt was triggered and ISR was called Time between two: %lld\n",((time_second_trigger-time_first_trigger) / 1000)/ 58); //us/58 = cm
+    time_interval = ((time_second_trigger-time_first_trigger) / 1000)/ 58;
+	printk("Distance: %lld\n",((time_second_trigger-time_first_trigger) / 1000)/ 58); //us/58 = cm
 
 	queue_work(my_wq, &my_work);
 
