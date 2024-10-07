@@ -147,18 +147,20 @@ if (!inputFile) {
 std::string line;
 int distance;
 do{
-	gpio_drivers::set_high(L_IN1);
-	gpio_drivers::set_high(L_IN1);
+	//trigger PWM
+	gpio_drivers::set_high(SONAR3);
+	sleep(0.00001);
+	gpio_drivers::set_low(SONAR3);
 
+	//get interrupt info (Distance)
 	std::getline(inputFile, line);
-	std::string numberStr = line.substr(62);
-	int distance = std::atoi(numberStr.c_str());
+	int distance = std::atoi(line.c_str());
 	
-	move_forward(175,dma_object);
+	move_forward(175, dma_object);
 	//sleep(1);
 
 	
-}while(distance>15);
+}while(distance>15); 
 
 dma_object.turn_off();
 
