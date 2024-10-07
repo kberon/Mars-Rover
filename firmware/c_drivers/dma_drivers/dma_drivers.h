@@ -36,6 +36,7 @@ uint32_t block_one[8] =
 
 public:
 uint32_t num_reserved = 0;
+uint32_t iteration = 0;
 pin_container reserved[20];
 void init_data();
 void turn_off();

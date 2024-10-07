@@ -64,22 +64,22 @@ void dma_handler::init_data()
 uint32_t all_on[32] = {};
 for (int i = 0; i < 32; i++)
 {
-	all_on[i] = 1<<i;
+        all_on[i] = 1<<i;
 }
 this->source_info = dma_malloc(sizeof(all_on));
 uint32_t* all_on_pointer = reinterpret_cast<uint32_t*>(source_info->virtual_addr);
 for (int i = 0; i<32; i++)
 {
-	*(all_on_pointer+i) = all_on[i];
-	std::cout << "\nArray element : "<<all_on[i] << "\n";
+        *(all_on_pointer+i) = all_on[i];
+        //std::cout << "\nArray element : "<<all_on[i] << "\n";
 }
 
 
 
 for (int j = 0; j<20; j++)
 {
-	reserved[j].reserved_me = false;
-	reserved[j].pin = 40;
+        reserved[j].reserved_me = false;
+        reserved[j].pin = 40;
 }
 
 }
@@ -95,36 +95,44 @@ pwm_dma(on_block,num_blocks_f,dma_num,pin_number);
 
 void dma_handler::turn_off()
 {
-	uint32_t* point_virt = reinterpret_cast<uint32_t*>(dma_cbs->virtual_addr);
-	for (int i =0; i<num_control_blocks; i++)
-	{
-		point_virt[i*8 + 1] = bus_address_off; //fires nothing at all
-	}
-	gpio_drivers::set_low(5);
-	gpio_drivers::set_low(6);
-	gpio_drivers::set_low(13);
+        iteration++;
+        //std::cout << "iteration number is: " << iteration;
+        uint32_t* point_virt = reinterpret_cast<uint32_t*>(dma_cbs->virtual_addr);
+        for (int i =0; i<num_control_blocks; i++)
+        {
+//              std::cout << "\naccessing the element: " << i;
+                point_virt[i*8 + 1] = bus_address_off; //fires nothing at all
+        }
+        gpio_drivers::set_low(5);
+        gpio_drivers::set_low(6);
+        gpio_drivers::set_low(13);
         gpio_drivers::set_low(19);
-	gpio_drivers::set_low(26);
+        gpio_drivers::set_low(26);
         gpio_drivers::set_low(12);
-	for (int i = 0; i<20 ; i++)
-	{
-		reserved[i].reserved_me = false;
-	}
-	num_reserved = 0;
+        for (int i = 0; i<20 ; i++)
+        {
+//              std::cout << "\naccessing the element " << i;
+                reserved[i].reserved_me = false;
+                reserved[i].pin = 40;
+        }
+        num_reserved = 0;
+//      std::cout << "\nfinished turning off\n";
 }
 
 uint32_t dma_handler::find_index()
 {
-	uint32_t to_return = -1;
-	for (int i = 0; i<20;i++)
-	{
-		if(reserved[i].reserved_me == false)
-		{
-			to_return = i;
-			return to_return;
-		}
-	}
-	return to_return;
+        uint32_t to_return = -1;
+        for (int i = 0; i<20;i++)
+        {
+                if(reserved[i].reserved_me == false)
+                {
+                        to_return = i;
+                        std::cout << "\naccepted index = to_return" << to_return;
+                        return to_return;
+                }
+        }
+        std::cout << "\naccepted index = to_return";
+        return to_return;
 }
 
 
@@ -132,11 +140,11 @@ void dma_handler::print_all_cbs(uint32_t num_control_blocks,uint32_t* cb_start)
 {
 for (int i = 0; i<num_control_blocks;i++)
 {
-	for (int j = 0; j<8; j++)
-	{
-		std::cout << "\n" <<std::bitset<32>(cb_start[i*8+j]) << "\t" << cb_start[i*8+j];
-	}
-	std::cout << "\n\n";
+        for (int j = 0; j<8; j++)
+        {
+                std::cout << "\n" <<std::bitset<32>(cb_start[i*8+j]) << "\t" << cb_start[i*8+j];
+        }
+        std::cout << "\n\n";
 }
 return;
 }
@@ -165,8 +173,8 @@ std::cout << "This is running";
 
 if (on_block >= num_blocks_f)
 {
-	std::cout << "This is not a valid rate number, please provide a value between 0-100; no code exectued" << "\n";
-	return;
+        std::cout << "This is not a valid rate number, please provide a value between 0-100; no code exectued" << "\n";
+        return;
 }
 
 //memory mapping dma memory:
@@ -224,29 +232,29 @@ uint32_t* point_virt = reinterpret_cast<uint32_t*>(dma_cbs->virtual_addr);
 for (int i = 0; i<num_control_blocks; i++)
 {
         point_virt[i*8] = block_one[0];
-	if(i == 0)
-	{
-	point_virt[i*8 + 1] = bus_address_on;
-	point_virt[i*8 + 2] = block_one[2];
-	//std::cout << "\n start";
-	}
-	else if (i == on_block)
-	{
-	//std::cout << "\nGOOD\n\n";
-	point_virt[i*8 + 1] = bus_address_on;
-	point_virt[i*8 + 2] = 0x7e200028;
-	}
-	else
-	{
-	//std::cout << "\ndo nothing \n";
-	point_virt[i*8 + 1] = bus_address_off; //fires nothing at all
+        if(i == 0)
+        {
+        point_virt[i*8 + 1] = bus_address_on;
         point_virt[i*8 + 2] = block_one[2];
-	}
+        //std::cout << "\n start";
+        }
+        else if (i == on_block)
+        {
+        //std::cout << "\nGOOD\n\n";
+        point_virt[i*8 + 1] = bus_address_on;
+        point_virt[i*8 + 2] = 0x7e200028;
+        }
+        else
+        {
+        //std::cout << "\ndo nothing \n";
+        point_virt[i*8 + 1] = bus_address_off; //fires nothing at all
+        point_virt[i*8 + 2] = block_one[2];
+        }
         point_virt[i*8 + 3] = block_one[3];
-	point_virt[i*8 + 4] = block_one[4];
+        point_virt[i*8 + 4] = block_one[4];
         point_virt[i*8 + 5] = dma_cbs->bus_addr + 8*sizeof(uint32_t)*(i+1); //address of first block + offset of a block*(current block # + 1) -- gives us address of next block
         point_virt[i*8 + 6] = block_one[6];
-	point_virt[i*8 + 7] = block_one[7];
+        point_virt[i*8 + 7] = block_one[7];
 }
 
 point_virt[(num_control_blocks-1)*8 +5] = dma_cbs->bus_addr; //creating the infinite loop.
@@ -259,7 +267,7 @@ initiate_dma_transfer(dma_mem,dma_cbs->bus_addr,0);
 std::cout << "\nThe on address is " << bus_address_on;
 std::cout << "\nThe off address is " << bus_address_off;
 
-
+close(fd);
 
 return;
 
@@ -268,6 +276,8 @@ return;
 
 void dma_handler::modify_blocks(uint8_t on_block, uint8_t num_blocks_f, uint32_t pin_number)
 {
+
+//std::cout << "We are modifiying blocks\n";
 
 //need to modify this
 
@@ -280,29 +290,29 @@ uint32_t bus_address_on = (uint32_t)((all_address_base+pin_number*4));
 
 for (int j = 0; j<20; j++)
 {
-	if(reserved[j].reserved_me == true)
-	{
-		if(reserved[j].start == temp_start || reserved[j].start == temp_end)
-		{
-			temp_start++;
-			temp_end++;
-			if(temp_end >= num_control_blocks)
-			{
-				temp_end = 0;
-			}
-		j = 0;
-		}
-		if(reserved[j].end == temp_start || reserved[j].end == temp_end)
-        	{
-                	temp_start++;
-                	temp_end++;
-                	if(temp_end >= num_control_blocks)
-                	{
-                        	temp_end = 0;
-                	}
-                	j = 0;
-	        }
-	}
+        if(reserved[j].reserved_me == true)
+        {
+                if(reserved[j].start == temp_start || reserved[j].start == temp_end)
+                {
+                        temp_start++;
+                        temp_end++;
+                        if(temp_end >= num_control_blocks)
+                        {
+                                temp_end = 0;
+                        }
+                j = 0;
+                }
+                if(reserved[j].end == temp_start || reserved[j].end == temp_end)
+                {
+                        temp_start++;
+                        temp_end++;
+                        if(temp_end >= num_control_blocks)
+                        {
+                                temp_end = 0;
+                        }
+                        j = 0;
+                }
+        }
 
 }
 
@@ -336,15 +346,15 @@ void dma_handler::clear_block(uint8_t pin_number)
 int32_t index_important = -1;
 for (int i = 0; i<num_reserved; i++)
 {
-	if(reserved[i].pin == pin_number)
-	{
-		index_important = i;
-	}
+        if(reserved[i].pin == pin_number)
+        {
+                index_important = i;
+        }
 }
 if(index_important == -1)
 {
-	std::cout << "Nothing to be done\n";
-	return;
+        std::cout << "Nothing to be done\n";
+        return;
 }
 
 //clearing found block if found:
