@@ -48,9 +48,9 @@ After=network.target
 
 [Service]
 Type=oneshot
-ExecStart=/sbin/insmod /home/raspberry/Mars-Rover/firmware/sonar_modules/sonar1/sonar1.ko
-ExecStart=/sbin/insmod /home/raspberry/Mars-Rover/firmware/sonar_modules/sonar2/sonar2.ko
-ExecStart=/sbin/insmod /home/raspberry/Mars-Rover/firmware/sonar_modules/sonar3/sonar3.ko
+ExecStart=/sbin/insmod /home/raspberry/Mars-Rover/firmware/sonar_1/sonar_1.ko
+ExecStart=/sbin/insmod /home/raspberry/Mars-Rover/firmware/sonar_2/sonar_2.ko
+ExecStart=/sbin/insmod /home/raspberry/Mars-Rover/firmware/sonar_3/sonar_3.ko
 RemainAfterExit=yes
 
 [Install]
