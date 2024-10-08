@@ -71,7 +71,35 @@ cd WiringPi
 sudo dpkg -i debian-template/wiringpi_3.10_arm64.deb
 ```
 4. Docker setup
-5. To run our camera + sensors executable:
+Get the install script:
+```
+curl -fsSL https://get.docker.com -o get-docker.sh
+chmod +x get-docker.sh
+```
+Remove an existing docker installations with:
+```
+sudo apt-get purge docker-ce docker-ce-cli containerd.io -y
+```
+Run the script:
+```
+./get-docker.sh
+```
+Fix permissions:
+```
+sudo usermod -aG docker pi
+sudo systemctl unmask docker
+sudo chmod 666 /var/run/docker.sock
+```
+Install docker-compose:
+```
+pip3 -v install docker-compose
+```
+Start and reboot Docker:
+```
+sudo systemctl start docker
+sudo init 6
+```   
+6. To run our camera + sensors executable:
 ```
 sudo apt-get install libgtk-3-dev
 sudo apt-get install libopencv-dev
