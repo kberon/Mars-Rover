@@ -8,19 +8,7 @@
 #include <unistd.h>
 using namespace std;
 
-#define SONAR3 22
 
-#define MOTOR1_EN 5
-#define MOTOR2_EN 6
-#define MOTOR3_EN 13
-#define MOTOR4_EN 19
-#define MOTOR5_EN 26
-#define MOTOR6_EN 12
-
-#define L_IN1 8
-#define L_IN2 7
-#define R_IN1 14
-#define R_IN2 15
 
 
 

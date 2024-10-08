@@ -114,6 +114,7 @@ void read_sonar_1(long long& time)
 	} 
 	else 
 	{
+		time = time/58000;
     		printf("Read number: %lld\n", time);
 	}
 	fclose(file);
@@ -135,6 +136,7 @@ void read_sonar_2(long long& time)
         }
         else
         {
+		time = time/58000;
                 printf("Read number: %lld\n", time);
         }
         fclose(file);
@@ -156,6 +158,7 @@ void read_sonar_3(long long& time)
         }
         else
         {
+		time = time/58000;
                 printf("Read number: %lld\n", time);
         }
         fclose(file);
