@@ -61,7 +61,7 @@ static int __init my_init(void) {
 	printk("Initiating gpio interrupt...\n");
 
 	    // Create the sysfs directory /sys/kernel/<module_name>
-    	kobj_ref = kobject_create_and_add("sonar_time", kernel_kobj);
+    	kobj_ref = kobject_create_and_add("sonar_1_time", kernel_kobj);
     	if (!kobj_ref)
 	{
         return -ENOMEM;

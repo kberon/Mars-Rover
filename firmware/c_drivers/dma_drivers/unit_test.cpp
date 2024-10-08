@@ -198,46 +198,72 @@ gpio_drivers::set_output(SONAR3);
 
 
 
+
+
+
 dma_handler dma_object = dma_handler(125,250,0,26);
 dma_object.turn_off();
-move_forward(100,dma_object);
 
+//testing motors moving forward
+gpio_drivers::set_high(L_IN1);
+gpio_drivers::set_low(L_IN2);
+gpio_drivers::set_low(R_IN1);
+gpio_drivers::set_high(R_IN2);
+
+
+//testing motor_1
+std::cout << "\ntesting motor 1: "; 
+dma_object.modify_blocks(100,250,MOTOR1_EN);
+sleep(1);
+dma_object.turn_off();
+//testing motor_2
+std::cout << "\ntesting motor 2: ";
+dma_object.modify_blocks(100,250,MOTOR2_EN);
+sleep(1);
+dma_object.turn_off();
+//testing motor_3
+std::cout << "\ntesting motor 3: ";
+dma_object.modify_blocks(100,250,MOTOR3_EN);
+sleep(1);
+dma_object.turn_off();
+//testing motor_4
+std::cout << "\ntesting motor 4: ";
+dma_object.modify_blocks(100,250,MOTOR4_EN);
+sleep(1);
+dma_object.turn_off();
+//testing motor_5
+std::cout << "\ntesting motor 5: ";
+dma_object.modify_blocks(100,250,MOTOR5_EN);
+sleep(1);
+dma_object.turn_off();
+//testing motor_1
+std::cout << "\ntesting motor 6: ";
+dma_object.modify_blocks(100,250,MOTOR6_EN);
+sleep(1);
+dma_object.turn_off();
+
+//testing sonar from here on out
 
 long long sonar_1_value = -1;
 long long sonar_2_value = -1;
 long long sonar_3_value = -1;
 
-while((sonar_1_value <= 0 || sonar_1_value >= 15) && (sonar_2_value <= 0 || sonar_2_value >= 15) && (sonar_3_value <= 0 || sonar_3_value >= 15))
+//while((sonar_1_value <= 0 || sonar_1_value >= 15) && (sonar_2_value <= 0 || sonar_2_value >= 15) && (sonar_3_value <= 0 || sonar_3_value >= 15))
+while(1)
 {
-long long sonar_1_value = -1;
 prompt_sonar();
 read_sonar_1(sonar_1_value);
+read_sonar_2(sonar_2_value);
+read_sonar_3(sonar_3_value);
 sleep(1);
+std::cout << "\nsonar 1 value: " << sonar_1_value;
+std::cout << "\nsonar 2 value: " << sonar_2_value;
+std::cout << "\nsonar 3 value: " << sonar_3_value;
 }
 
 
 
 
-/*
-std::string line;
-int distance;
-do{
-	//trigger PWM
-	gpio_drivers::set_high(SONAR3);
-	sleep(0.00001);
-	gpio_drivers::set_low(SONAR3);
-
-	//get interrupt info (Distance)
-	std::getline(inputFile1, line);
-	int distance = std::atoi(line.c_str());
-	
-	move_forward(175, dma_object);
-	//sleep(1);
-
-	
-}while(distance>15); 
-
-dma_object.turn_off();*/
 
 
 return 0;

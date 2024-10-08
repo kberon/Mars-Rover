@@ -61,7 +61,7 @@ static int __init my_init(void) {
 	printk("Initiating gpio interrupt...\n");
 
 	    // Create the sysfs directory /sys/kernel/<module_name>
-    	kobj_ref = kobject_create_and_add("sonar_time", kernel_kobj);
+    	kobj_ref = kobject_create_and_add("sonar_3_time", kernel_kobj);
     	if (!kobj_ref)
 	{
         return -ENOMEM;
@@ -77,10 +77,10 @@ static int __init my_init(void) {
 
 	//setup GPIO pin
 	//cat /sys/kernel/debug/gpio tells you which number linux uses to reference.
-	int gpio_stat = gpio_request(529, "rpi-gpio-17");
+	int gpio_stat = gpio_request(536, "rpi-gpio-24");
 	if(gpio_stat == -EBUSY)
 	{
-	printk("ERROR: GPIO 17 is not free. free it or reboot\n");
+	printk("ERROR: GPIO 24 is not free. free it or reboot\n");
 	return -1;
 	}
 	if(gpio_stat == -EINVAL)
@@ -93,19 +93,19 @@ static int __init my_init(void) {
 	printk("Flags for errors are wrong: %d\n",gpio_stat);
 	return -1;
 	}
-	if(gpio_direction_input(529))
+	if(gpio_direction_input(536))
 	{
-	printk("ERROR: GPIO 13 cannot be set as input\n");
+	printk("ERROR: GPIO 24 cannot be set as input\n");
 	gpio_free(529);
 	return -1;
 	}
 	//done setting up pin 13
 	//setting up interrupt now
-	irq_number = gpio_to_irq(529);
+	irq_number = gpio_to_irq(536);
 	if(request_irq(irq_number, gpio_irq_handler, IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING,"my_gpio_irq",NULL) !=0)
 	{
 	printk("Error occured when assigning interrupt");
-	gpio_free(529);
+	gpio_free(536);
 	return -1;
 	}
 	
@@ -125,7 +125,7 @@ static void __exit my_exit(void) {
 	//done removing sysfs
 
 	free_irq(irq_number,NULL);
-	gpio_free(529);
+	gpio_free(536);
 	printk("GPIO_IRQ: Done unloading\n");
 }
 
