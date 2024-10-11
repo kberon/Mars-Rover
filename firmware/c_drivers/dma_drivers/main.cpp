@@ -22,7 +22,7 @@
 #define R_IN1	14
 #define R_IN2	15
 
-void move_forward(uint8_t power,dma_handler& dma_object)
+void move_backward(uint8_t power,dma_handler& dma_object)
 {
 
 gpio_drivers::set_high(L_IN1);
@@ -40,23 +40,7 @@ dma_object.modify_blocks(power,250,MOTOR6_EN);
 
 }
 
-void move_backward(uint8_t power, dma_handler& dma_object)
-{
-gpio_drivers::set_low(L_IN1);
-gpio_drivers::set_high(L_IN2);
-gpio_drivers::set_high(R_IN1);
-gpio_drivers::set_low(R_IN2);
-
-dma_object.modify_blocks(power,250,MOTOR1_EN);
-dma_object.modify_blocks(power,250,MOTOR2_EN);
-dma_object.modify_blocks(power,250,MOTOR3_EN);
-dma_object.modify_blocks(power,250,MOTOR4_EN);
-dma_object.modify_blocks(power,250,MOTOR5_EN);
-dma_object.modify_blocks(power,250,MOTOR6_EN);
-
-}
-
-void turn_right(uint8_t power, dma_handler& dma_object)
+void move_forward(uint8_t power, dma_handler& dma_object)
 {
 gpio_drivers::set_low(L_IN1);
 gpio_drivers::set_high(L_IN2);
@@ -74,10 +58,26 @@ dma_object.modify_blocks(power,250,MOTOR6_EN);
 
 void turn_left(uint8_t power, dma_handler& dma_object)
 {
-gpio_drivers::set_low(L_IN1);
-gpio_drivers::set_high(L_IN2);
+gpio_drivers::set_high(L_IN1);
+gpio_drivers::set_low(L_IN2);
 gpio_drivers::set_high(R_IN1);
 gpio_drivers::set_low(R_IN2);
+
+dma_object.modify_blocks(power,250,MOTOR1_EN);
+dma_object.modify_blocks(power,250,MOTOR2_EN);
+dma_object.modify_blocks(power,250,MOTOR3_EN);
+dma_object.modify_blocks(power,250,MOTOR4_EN);
+dma_object.modify_blocks(power,250,MOTOR5_EN);
+dma_object.modify_blocks(power,250,MOTOR6_EN);
+
+}
+
+void turn_right(uint8_t power, dma_handler& dma_object)
+{
+gpio_drivers::set_low(L_IN1);
+gpio_drivers::set_high(L_IN2);
+gpio_drivers::set_low(R_IN1);
+gpio_drivers::set_high(R_IN2);
 
 dma_object.modify_blocks(power,250,MOTOR1_EN);
 dma_object.modify_blocks(power, 250, MOTOR2_EN);
@@ -114,8 +114,9 @@ void read_sonar_1(long long& time)
 	} 
 	else 
 	{
+		printf("sonar 1 pre-conversion: %lld\n" , time);
 		time = time/58000;
-    		printf("Read number: %lld\n", time);
+    		printf("sonar_1 Read number: %lld\n", time);
 	}
 	fclose(file);
 }
@@ -137,7 +138,7 @@ void read_sonar_2(long long& time)
         else
         {
 		time = time/58000;
-                printf("Read number: %lld\n", time);
+                printf("sonar_2 Read number: %lld\n", time);
         }
         fclose(file);
 }
@@ -159,7 +160,7 @@ void read_sonar_3(long long& time)
         else
         {
 		time = time/58000;
-                printf("Read number: %lld\n", time);
+                printf("sonar_3 Read number: %lld\n", time);
         }
         fclose(file);
 }
@@ -167,12 +168,17 @@ void read_sonar_3(long long& time)
 void prompt_sonar()
 {
 	gpio_drivers::set_high(SONAR1);
-	gpio_drivers::set_high(SONAR2);
-	gpio_drivers::set_high(SONAR3);
-	sleep(0.002);
+	sleep(0.1);
 	gpio_drivers::set_low(SONAR1);
-	gpio_drivers::set_low(SONAR2);
-	gpio_drivers::set_low(SONAR3);
+	//sleep(0.80);
+	//gpio_drivers::set_high(SONAR2);
+	//sleep(0.1);
+	//gpio_drivers::set_low(SONAR2);
+	//sleep(0.80);
+	//gpio_drivers::set_high(SONAR3);
+	//sleep(0.1);
+	//gpio_drivers::set_low(SONAR3);
+	//sleep(.2);
 	return;
 }
 
@@ -203,44 +209,46 @@ gpio_drivers::set_output(SONAR3);
 
 dma_handler dma_object = dma_handler(125,250,0,26);
 dma_object.turn_off();
-move_forward(100,dma_object);
+move_forward(40,dma_object);
+
+prompt_sonar();
 
 
 long long sonar_1_value = -1;
 long long sonar_2_value = -1;
 long long sonar_3_value = -1;
 
-while((sonar_1_value <= 0 || sonar_1_value >= 15) && (sonar_2_value <= 0 || sonar_2_value >= 15) && (sonar_3_value <= 0 || sonar_3_value >= 15))
+
+while(1)
 {
-long long sonar_1_value = -1;
+
 prompt_sonar();
 read_sonar_1(sonar_1_value);
+prompt_sonar();
+read_sonar_1(sonar_1_value);
+sonar_1_value = 0;
+move_forward(40,dma_object);
+
+while((sonar_1_value <= 0 || sonar_1_value >= 40)) //&& (sonar_2_value <= 0 || sonar_2_value >= 25) && (sonar_3_value <= 0 || sonar_3_value >= 25))
+//while(1)
+{
+prompt_sonar();
+read_sonar_1(sonar_1_value);
+//read_sonar_2(sonar_2_value);
+//read_sonar_3(sonar_3_value);
+sleep(.5);
+}
+
+std::cout << "We are running this";
+dma_object.turn_off();
 sleep(1);
+turn_right(100,dma_object);
+sleep(2);
+dma_object.turn_off();
 }
 
 
 
-
-/*
-std::string line;
-int distance;
-do{
-	//trigger PWM
-	gpio_drivers::set_high(SONAR3);
-	sleep(0.00001);
-	gpio_drivers::set_low(SONAR3);
-
-	//get interrupt info (Distance)
-	std::getline(inputFile1, line);
-	int distance = std::atoi(line.c_str());
-	
-	move_forward(175, dma_object);
-	//sleep(1);
-
-	
-}while(distance>15); 
-
-dma_object.turn_off();*/
 
 
 return 0;

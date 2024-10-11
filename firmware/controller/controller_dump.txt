@@ -81,7 +81,7 @@ Analog input: 10 - 62
 Analog input: 10 - 0
 
 
-MIDDLE BUTTNS:
+MIDDLE BUTTONS:
 ------------------- RIGHT -------------------------------------------
 Button pressed: BTN_START
 Raw event: event at 1727104226.965364, code 00, type 00, val 00

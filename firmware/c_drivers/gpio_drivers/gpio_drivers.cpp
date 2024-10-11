@@ -34,6 +34,7 @@ void gpio_drivers::set_output(int selected_pin)
 	uint32_t current = *(gpio_mem + fsel);
 	uint32_t mask = ~(0b111 << (offset * 3));
 	*(gpio_mem + fsel) = (current & mask) | desired_set;
+	close(fd);
 }
 
 void gpio_drivers::set_input(int selected_pin)
@@ -51,6 +52,7 @@ void gpio_drivers::set_input(int selected_pin)
 	uint32_t current = *(gpio_mem + fsel);
 	uint32_t mask = ~(0b111 << (offset * 3));
 	*(gpio_mem + fsel) = (current & mask); //|desired_set;
+	close(fd);
 	return;
 }
 
@@ -68,6 +70,7 @@ void gpio_drivers::set_high(int selected_pin)
 
 	uint32_t *gpio_mem = reinterpret_cast<uint32_t *>(mmap(0, 4096, 3, 1, fd, 0));
 	*(gpio_mem + mem_shift) = mask;
+	close(fd);
 	return;
 }
 
@@ -88,6 +91,7 @@ void gpio_drivers::set_low(int selected_pin)
 	//print_32(mask);
 	//print_32(mem_shift);
 	*(gpio_mem + mem_shift) = mask;
+	close(fd);
 	return;
 }
 

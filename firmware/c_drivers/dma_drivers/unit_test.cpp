@@ -5,7 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-
+ 
 #define SONAR1 16
 #define SONAR2 20
 #define SONAR3 21
@@ -114,7 +114,7 @@ void read_sonar_1(long long& time)
 	} 
 	else 
 	{
-    		printf("Read number: %lld\n", time);
+    		//printf("\nRead number: %lld", time);
 	}
 	fclose(file);
 }
@@ -135,7 +135,7 @@ void read_sonar_2(long long& time)
         }
         else
         {
-                printf("Read number: %lld\n", time);
+                //printf("Read number: %lld\n", time);
         }
         fclose(file);
 }
@@ -156,12 +156,12 @@ void read_sonar_3(long long& time)
         }
         else
         {
-                printf("Read number: %lld\n", time);
+                //printf("Read number: %lld\n", time);
         }
         fclose(file);
 }
 
-void prompt_sonar()
+/*void prompt_sonar()
 {
 	gpio_drivers::set_high(SONAR1);
 	gpio_drivers::set_high(SONAR2);
@@ -171,7 +171,25 @@ void prompt_sonar()
 	gpio_drivers::set_low(SONAR2);
 	gpio_drivers::set_low(SONAR3);
 	return;
+}*/
+
+void prompt_sonar()
+{
+        gpio_drivers::set_high(SONAR1);
+        sleep(0.1);
+        gpio_drivers::set_low(SONAR1);
+        sleep(0.80);
+        gpio_drivers::set_high(SONAR2);
+        sleep(0.1);
+        gpio_drivers::set_low(SONAR2);
+        sleep(0.80);
+        gpio_drivers::set_high(SONAR3);
+        sleep(0.1);
+        gpio_drivers::set_low(SONAR3);
+        sleep(.2);
+        return;
 }
+
 
 
 int main()
@@ -255,6 +273,9 @@ prompt_sonar();
 read_sonar_1(sonar_1_value);
 read_sonar_2(sonar_2_value);
 read_sonar_3(sonar_3_value);
+sonar_1_value = sonar_1_value/58000;
+sonar_2_value = sonar_2_value/58000;
+sonar_3_value = sonar_3_value/58000;
 sleep(1);
 std::cout << "\nsonar 1 value: " << sonar_1_value;
 std::cout << "\nsonar 2 value: " << sonar_2_value;
