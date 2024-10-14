@@ -168,17 +168,17 @@ void read_sonar_3(long long& time)
 void prompt_sonar()
 {
 	gpio_drivers::set_high(SONAR1);
-	sleep(0.1);
+	sleep(0.01);
 	gpio_drivers::set_low(SONAR1);
-	//sleep(0.80);
-	//gpio_drivers::set_high(SONAR2);
-	//sleep(0.1);
-	//gpio_drivers::set_low(SONAR2);
-	//sleep(0.80);
-	//gpio_drivers::set_high(SONAR3);
-	//sleep(0.1);
-	//gpio_drivers::set_low(SONAR3);
-	//sleep(.2);
+	sleep(0.80);
+	gpio_drivers::set_high(SONAR2);
+	sleep(0.01);
+	gpio_drivers::set_low(SONAR2);
+	sleep(0.80);
+	gpio_drivers::set_high(SONAR3);
+	sleep(0.01);
+	gpio_drivers::set_low(SONAR3);
+	sleep(.2);
 	return;
 }
 

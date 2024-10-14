@@ -26,6 +26,7 @@ using namespace std;
 
 #define device_path "/dev/input/event4" // change as needed
 // const char* device_path = "/dev/input/event10";
+// ls /dev/input/event*
 
 // buttons: right middle : switch modes, left middle: kill
 
@@ -211,7 +212,6 @@ void init_motors_and_sonar()
 int init_controller()
 {
     // Controller input setup
-    // ls /dev/input/event*
     // Adjust path as necessary for your Xbox controller
     fd_controller = open(device_path, O_RDONLY);
     if (fd_controller == -1)
@@ -311,6 +311,7 @@ int main()
 
         prompt_sonar();
         long long sonar_1_value = -1;
+        move_forward(40, dma_object);
         
         while (mode == false)
         { // autonomous
@@ -318,23 +319,44 @@ int main()
             //move_forward(40, dma_object);
 
             cout << "IN AUTONOMOUS MODE" << endl;
-            // poll to switch modes or kill
+            
             /*
             ssize_t bytes = read(fd_controller, &ev, sizeof(ev));
-            if (ev.type == EV_KEY && ev.value == 1 && ev.code == BTN_START)
-            {
-                dma_object.turn_off();
-                mode = true;
-                cout << "Changing to autonomous mode" << endl;
-                sleep(1);
-                break;
-            }
-            else if (ev.type == EV_KEY && ev.value == 1 && ev.code == BTN_SELECT)
-            {
-                dma_object.turn_off();
-                cout << "KILLED" << endl;
+            if (bytes > 0)
+                cout << "NUMBER OF BYTES: " << bytes << endl;
+
+            if (ev.type == EV_KEY && ev.value == 1) {
+                if (ev.code == BTN_START) {
+                    dma_object.turn_off();
+                    mode = true; // Switch to teleop mode
+                    cout << "Changing to teleop mode" << endl;
+                    sleep(1);
+                    break; // Exit the autonomous loop
+                } 
+                else if (ev.code == BTN_SELECT) {
+                    dma_object.turn_off();
+                    cout << "KILLED" << endl;
+                }
             }
             */
+
+          ssize_t bytes = read(fd_controller, &ev, sizeof(ev));
+            if (bytes == sizeof(ev)) {
+                if (ev.type == EV_KEY && ev.value == 1) {
+                    switch (ev.code) {
+                        case BTN_START:
+                            dma_object.turn_off();
+                            mode = true;
+                            std::cout << "Changing to teleop mode" << std::endl;
+                            sleep(1);
+                            continue;  // Skip the rest of the autonomous loop
+                        case BTN_SELECT:
+                            dma_object.turn_off();
+                            std::cout << "KILLED" << std::endl;
+                            return 0;  // Exit the program
+                    }
+                }
+            }
 
             // if not switch or kill, autonomous
             prompt_sonar();
@@ -342,12 +364,15 @@ int main()
             prompt_sonar();
             read_sonar_2(sonar_1_value);
             sonar_1_value = 0;
-            move_forward(30, dma_object);
+            //move_forward(30, dma_object);
 
+
+            /*
             while(sonar_1_value <= 0 || sonar_1_value >= 40){
                 prompt_sonar();
-                read_sonar_2(sonar_1_value);
+                //read_sonar_1(sonar_1_value);
                 //read_sonar_2(sonar_2_value);
+                read_sonar_2(sonar_1_value);
                 //read_sonar_3(sonar_3_value);
                 sleep(.5);
             }
@@ -359,9 +384,20 @@ int main()
             sleep(2);
             dma_object.turn_off();
             move_forward(40, dma_object);
-            
+            */
+
+
+            if(sonar_1_value < 40){
+                dma_object.turn_off();
+                sleep(1);
+                turn_right(100, dma_object);
+                sleep(2);
+                dma_object.turn_off();
+                move_forward(40, dma_object);
+            }
+            usleep(10000); 
         }
-        sleep(0.0001);
+        //sleep(0.0001);
     }
 
     close(fd_controller);

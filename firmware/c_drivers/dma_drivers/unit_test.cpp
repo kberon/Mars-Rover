@@ -100,23 +100,25 @@ void print_all_thing(dma_handler& dma_object)
 
 void read_sonar_1(long long& time)
 {
-	FILE *file;
-	file = fopen("/sys/kernel/sonar_1_time/time_diff", "r");
-	if (file == NULL) 
-	{
-    		perror("Error opening file");
-		time = -1;
-    		return;
-	}
-	if (fscanf(file, "%lld", &time) != 1) {
-    		printf("Error reading number from file\n");
-		time = -1;
-	} 
-	else 
-	{
-    		//printf("\nRead number: %lld", time);
-	}
-	fclose(file);
+        FILE *file;
+        file = fopen("/sys/kernel/sonar_1_time/time_diff", "r");
+        if (file == NULL)
+        {
+                perror("Error opening file");
+                time = -1;
+                return;
+        }
+        if (fscanf(file, "%lld", &time) != 1) {
+                printf("Error reading number from file\n");
+                time = -1;
+        }
+        else
+        {
+                printf("sonar 1 pre-conversion: %lld\n" , time);
+                time = time/58000;
+                printf("sonar_1 Read number: %lld\n", time);
+        }
+        fclose(file);
 }
 
 void read_sonar_2(long long& time)
@@ -135,7 +137,8 @@ void read_sonar_2(long long& time)
         }
         else
         {
-                //printf("Read number: %lld\n", time);
+                time = time/58000;
+                printf("sonar_2 Read number: %lld\n", time);
         }
         fclose(file);
 }
@@ -156,35 +159,24 @@ void read_sonar_3(long long& time)
         }
         else
         {
-                //printf("Read number: %lld\n", time);
+                time = time/58000;
+                printf("sonar_3 Read number: %lld\n", time);
         }
         fclose(file);
 }
 
-/*void prompt_sonar()
-{
-	gpio_drivers::set_high(SONAR1);
-	gpio_drivers::set_high(SONAR2);
-	gpio_drivers::set_high(SONAR3);
-	sleep(0.002);
-	gpio_drivers::set_low(SONAR1);
-	gpio_drivers::set_low(SONAR2);
-	gpio_drivers::set_low(SONAR3);
-	return;
-}*/
-
 void prompt_sonar()
 {
         gpio_drivers::set_high(SONAR1);
-        sleep(0.1);
+        sleep(0.01);
         gpio_drivers::set_low(SONAR1);
         sleep(0.80);
         gpio_drivers::set_high(SONAR2);
-        sleep(0.1);
+        sleep(0.01);
         gpio_drivers::set_low(SONAR2);
         sleep(0.80);
         gpio_drivers::set_high(SONAR3);
-        sleep(0.1);
+        sleep(0.01);
         gpio_drivers::set_low(SONAR3);
         sleep(.2);
         return;
@@ -273,10 +265,10 @@ prompt_sonar();
 read_sonar_1(sonar_1_value);
 read_sonar_2(sonar_2_value);
 read_sonar_3(sonar_3_value);
+sleep(1);
 sonar_1_value = sonar_1_value/58000;
 sonar_2_value = sonar_2_value/58000;
 sonar_3_value = sonar_3_value/58000;
-sleep(1);
 std::cout << "\nsonar 1 value: " << sonar_1_value;
 std::cout << "\nsonar 2 value: " << sonar_2_value;
 std::cout << "\nsonar 3 value: " << sonar_3_value;
