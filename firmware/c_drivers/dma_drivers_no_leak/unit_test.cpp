@@ -22,13 +22,13 @@
 #define R_IN1	14
 #define R_IN2	15
 
-/*void move_forward(uint8_t power,dma_handler& dma_object)
+void move_forward(uint8_t power,dma_handler& dma_object, gpio_drivers gpio)
 {
 
-gpio_drivers::set_high(L_IN1);
-gpio_drivers::set_low(L_IN2);
-gpio_drivers::set_low(R_IN1);
-gpio_drivers::set_high(R_IN2);
+gpio.set_high(L_IN1);
+gpio.set_low(L_IN2);
+gpio.set_low(R_IN1);
+gpio.set_high(R_IN2);
 
 
 dma_object.modify_blocks(power,250,MOTOR1_EN);
@@ -40,12 +40,12 @@ dma_object.modify_blocks(power,250,MOTOR6_EN);
 
 }
 
-void move_backward(uint8_t power, dma_handler& dma_object)
+void move_backward(uint8_t power, dma_handler& dma_object, gpio_drivers& gpio)
 {
-gpio_drivers::set_low(L_IN1);
-gpio_drivers::set_high(L_IN2);
-gpio_drivers::set_high(R_IN1);
-gpio_drivers::set_low(R_IN2);
+gpio.set_low(L_IN1);
+gpio.set_high(L_IN2);
+gpio.set_high(R_IN1);
+gpio.set_low(R_IN2);
 
 dma_object.modify_blocks(power,250,MOTOR1_EN);
 dma_object.modify_blocks(power,250,MOTOR2_EN);
@@ -56,12 +56,12 @@ dma_object.modify_blocks(power,250,MOTOR6_EN);
 
 }
 
-void turn_right(uint8_t power, dma_handler& dma_object)
+void turn_right(uint8_t power, dma_handler& dma_object, gpio_drivers& gpio)
 {
-gpio_drivers::set_low(L_IN1);
-gpio_drivers::set_high(L_IN2);
-gpio_drivers::set_high(R_IN1);
-gpio_drivers::set_low(R_IN2);
+gpio.set_low(L_IN1);
+gpio.set_high(L_IN2);
+gpio.set_high(R_IN1);
+gpio.set_low(R_IN2);
 
 dma_object.modify_blocks(power,250,MOTOR1_EN);
 dma_object.modify_blocks(power,250,MOTOR2_EN);
@@ -72,12 +72,12 @@ dma_object.modify_blocks(power,250,MOTOR6_EN);
 
 }
 
-void turn_left(uint8_t power, dma_handler& dma_object)
+void turn_left(uint8_t power, dma_handler& dma_object, gpio_drivers& gpio)
 {
-gpio_drivers::set_low(L_IN1);
-gpio_drivers::set_high(L_IN2);
-gpio_drivers::set_high(R_IN1);
-gpio_drivers::set_low(R_IN2);
+gpio.set_low(L_IN1);
+gpio.set_high(L_IN2);
+gpio.set_high(R_IN1);
+gpio.set_low(R_IN2);
 
 dma_object.modify_blocks(power,250,MOTOR1_EN);
 dma_object.modify_blocks(power, 250, MOTOR2_EN);
@@ -96,7 +96,7 @@ void print_all_thing(dma_handler& dma_object)
 		std::cout << " " << dma_object.reserved[i].reserved_me;
 	}
 
-}*/
+}
 
 void read_sonar_1(long long& time_me)
 {
@@ -181,7 +181,7 @@ void prompt_sonar(gpio_drivers& gpio)
         gpio.set_high(SONAR3);
         sleep(0.01);
         gpio.set_low(SONAR3);
-        sleep(.2);
+        sleep(.4);
         return;
 }
 
@@ -191,22 +191,22 @@ int main()
 {
 
 
-
 /*
+gpio_drivers gpio = gpio_drivers();
 
 
 //pwm_dma(125,250,0); // pwm_dma(uint8_t on_block,uint8_t num_blocks_f,uint32_t dma_num)//rate should be a number between>
-gpio_drivers::set_output(MOTOR1_EN);
-gpio_drivers::set_output(MOTOR2_EN);
-gpio_drivers::set_output(MOTOR3_EN);
-gpio_drivers::set_output(MOTOR4_EN);
-gpio_drivers::set_output(MOTOR5_EN);
-gpio_drivers::set_output(MOTOR6_EN);
+gpio.set_output(MOTOR1_EN);
+gpio.set_output(MOTOR2_EN);
+gpio.set_output(MOTOR3_EN);
+gpio.set_output(MOTOR4_EN);
+gpio.set_output(MOTOR5_EN);
+gpio.set_output(MOTOR6_EN);
 
-gpio_drivers::set_output(L_IN1);
-gpio_drivers::set_output(L_IN2);
-gpio_drivers::set_output(R_IN1);
-gpio_drivers::set_output(R_IN2);
+gpio.set_output(L_IN1);
+gpio.set_output(L_IN2);
+gpio.set_output(R_IN1);
+gpio.set_output(R_IN2);
 
 
 
@@ -217,10 +217,10 @@ dma_handler dma_object = dma_handler(125,250,0,26);
 dma_object.turn_off();
 
 //testing motors moving forward
-gpio_drivers::set_high(L_IN1);
-gpio_drivers::set_low(L_IN2);
-gpio_drivers::set_low(R_IN1);
-gpio_drivers::set_high(R_IN2);
+gpio.set_high(L_IN1);
+gpio.set_low(L_IN2);
+gpio.set_low(R_IN1);
+gpio.set_high(R_IN2);
 
 
 //testing motor_1
@@ -258,6 +258,7 @@ dma_object.turn_off();
 
 
 gpio_drivers gpio = gpio_drivers();
+
 //setting up sonar triggers
 gpio.set_output(SONAR1);
 gpio.set_output(SONAR2);
