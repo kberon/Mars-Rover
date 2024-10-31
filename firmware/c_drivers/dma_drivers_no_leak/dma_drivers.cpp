@@ -103,12 +103,13 @@ void dma_handler::turn_off()
 //              std::cout << "\naccessing the element: " << i;
                 point_virt[i*8 + 1] = bus_address_off; //fires nothing at all
         }
-        gpio_drivers::set_low(5);
-        gpio_drivers::set_low(6);
-        gpio_drivers::set_low(13);
-        gpio_drivers::set_low(19);
-        gpio_drivers::set_low(26);
-        gpio_drivers::set_low(12);
+	gpio_drivers gpio = gpio_drivers();
+        gpio.set_low(5);
+        gpio.set_low(6);
+        gpio.set_low(13);
+        gpio.set_low(19);
+        gpio.set_low(26);
+        gpio.set_low(12);
         for (int i = 0; i<20 ; i++)
         {
 //              std::cout << "\naccessing the element " << i;
@@ -371,7 +372,8 @@ point_virt[(reserved[index_important].end)*8 + 2] = 0x7e200028;
 
 //The pin could be left floating high during this swap so we need to set it low
 uint32_t pin_to_set_low = reserved[index_important].pin;
-gpio_drivers::set_low(pin_to_set_low);
+gpio_drivers gpio = gpio_drivers();
+gpio.set_low(pin_to_set_low);
 //This is not finished ----------- need to make gpio a library
 
 

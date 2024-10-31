@@ -15,11 +15,20 @@ std::atomic<bool> running(true);
 
 // Function to detect and print the average color of the most significant object, and draw the detection on the frame
 void detect_and_draw_objects(cv::Mat& frame) {
-    cv::Mat gray, blurred, edged;
-    
+    cv::Mat gray, blurred, edged, mask;
+
+    // Create a mask to exclude regions (sensor box)
+    mask = cv::Mat::zeros(frame.size(), CV_8UC1);  // Create a black mask
+
+    // Define regions to mask (sensor data overlay)
+    cv::rectangle(mask, cv::Point(10, 10), cv::Point(360, 160), cv::Scalar(255), cv::FILLED);
+
     // Convert to grayscale and apply GaussianBlur to reduce noise
     cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
     cv::GaussianBlur(gray, gray, cv::Size(5, 5), 0);
+
+    // Apply the mask to the grayscale image, so these regions are ignored
+    gray.setTo(0, mask);  // Exclude the masked areas
 
     // Detect edges using Canny edge detection
     cv::Canny(gray, edged, 50, 150);
@@ -44,6 +53,8 @@ void detect_and_draw_objects(cv::Mat& frame) {
         }
     }
 
+    std::string dominant_color = "None"; // Default to none if no object found
+
     if (largest_contour_index != -1) {
         // Get the bounding rectangle of the largest contour
         cv::Rect bounding_box = cv::boundingRect(contours[largest_contour_index]);
@@ -61,7 +72,7 @@ void detect_and_draw_objects(cv::Mat& frame) {
         double green = avg_color[1];
         double red = avg_color[2];
 
-        std::string dominant_color;
+         std::string dominant_color;
 
         // Determine the dominant color by comparing RGB values
         if (red > green && red > blue) {
@@ -73,22 +84,25 @@ void detect_and_draw_objects(cv::Mat& frame) {
         } else {
             dominant_color = "Undetermined/Gray";
         }
+       
 
-        // Print the color and RGB values to the terminal
-        std::cout << "Dominant Color: " << dominant_color
-                  << " (R: " << std::fixed << std::setprecision(2) << red
-                  << ", G: " << green << ", B: " << blue << ")"
-                  << std::endl;
-    } else {
-        std::cout << "No significant object detected." << std::endl;
-    }
+    // Display the dominant color on the frame
+    cv::Scalar text_color(255, 255, 255);  // White text
+    int font = cv::FONT_HERSHEY_SIMPLEX;
+    cv::putText(frame, "Color: " + dominant_color, cv::Point(20, 190), font, 0.4, text_color, 1);
 }
-
+}
+// Function to capture frames from the camera, analyze object color, and display sensor data
 // Function to capture frames from the camera, analyze object color, and display sensor data
 void update_camera_feed() {
-    cv::VideoCapture camera(0);
+    cv::VideoCapture camera(0);  // Try to open the default camera (index 0)
+    
+    // Failsafe if camera is not found or cannot be opened
     if (!camera.isOpened()) {
-        std::cerr << "Error: Could not access the camera." << std::endl;
+        std::cerr << "Error: Camera not found. Press any key to exit." << std::endl;
+        
+        // Wait indefinitely for any key press to allow the user to exit gracefully
+        cv::waitKey(0);  
         return;
     }
 
@@ -109,6 +123,9 @@ void update_camera_feed() {
 
         // Resize frame to fit the 480x360 window size
         cv::resize(frame, frame, cv::Size(480, 360));
+
+        // Detect objects and draw bounding boxes and color detection on the frame
+        detect_and_draw_objects(frame);
 
         // Get sensor data
         int32_t temp = bme.get_temp();
@@ -139,8 +156,7 @@ void update_camera_feed() {
         cv::putText(frame, gyro_text, cv::Point(20, y_offset + 75), font, 0.4, text_color, 1);
         cv::putText(frame, accel_text, cv::Point(20, y_offset + 100), font, 0.4, text_color, 1);
 
-        // Detect objects and draw bounding boxes on the frame
-        detect_and_draw_objects(frame);
+        // The "Color: " text is already drawn in detect_and_draw_objects, below the sensor data
 
         // Convert OpenCV Mat to GdkPixbuf to display in GTK
         cv::cvtColor(frame, frame, cv::COLOR_BGR2RGB);  // Convert to RGB
@@ -162,6 +178,14 @@ void update_camera_feed() {
         }
 
         gtk_main_iteration_do(FALSE);
+
+        // Check if 'q' key is pressed to exit
+        if (cv::waitKey(30) == 'q') {
+            std::cout << "Exiting... 'q' key pressed." << std::endl;
+            running = false;  // Stop the loop
+            break;
+        }
+
         usleep(100000);  // Sleep for 100 milliseconds (~10 FPS)
     }
     camera.release();
