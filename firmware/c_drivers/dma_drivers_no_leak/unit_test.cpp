@@ -1,11 +1,13 @@
 #include "dma_drivers.h"
- //#include <ctime>
+  //#include <ctime>
 #include <unistd.h>
 #include "gpio_drivers.h"
 #include <iostream>
 #include <fstream>
 #include <string>
- 
+#include <vector>
+#include <numeric>
+  
 #define SONAR1 16
 #define SONAR2 20
 #define SONAR3 21
@@ -21,6 +23,42 @@
 #define L_IN2	7
 #define R_IN1	14
 #define R_IN2	15
+
+#define number_to_av 5
+#define CLOSE_LIM 20
+
+std::vector<uint32_t> sonar_one_reads;
+std::vector<uint32_t> sonar_two_reads;
+std::vector<uint32_t> sonar_three_reads;
+
+void print_array(std::vector<uint32_t> some_vector)
+{
+	for (const auto& number : some_vector) 
+	{
+        std::cout << number << std::endl;
+    	}
+}
+
+bool average_close(std::vector<uint32_t>& to_average)
+{
+	bool to_return = 0;
+	if(to_average.size() < number_to_av)
+	{
+	}
+	else
+	{
+		//print_array(to_average);
+		uint32_t average_c = std::accumulate(to_average.begin(), to_average.end(),0) / to_average.size();
+		//std::cout << "The average is: " << average_c << "\n";
+		if( average_c < CLOSE_LIM )
+		{
+			to_return = 1;
+			//std::cout << "average is: " << average_c << "\n";
+		}
+		to_average.pop_back();
+	}
+	return to_return;
+}
 
 void move_forward(uint8_t power,dma_handler& dma_object, gpio_drivers gpio)
 {
@@ -117,6 +155,7 @@ void read_sonar_1(long long& time_me)
         {
                 //printf("sonar 1 pre-conversion: %lld\n" , time);
                 time_me = time/58000;
+		sonar_one_reads.insert(sonar_one_reads.begin(),time_me);
                 printf("sonar_1 Read number: %lld\n", time_me);
         }
         fclose(file);
@@ -140,6 +179,7 @@ void read_sonar_2(long long& time_me)
         else
         {
                 time_me = time/58000;
+		sonar_two_reads.insert(sonar_two_reads.begin(),time_me);
                 printf("sonar_2 Read number: %lld\n", time_me);
         }
         fclose(file);
@@ -163,6 +203,7 @@ void read_sonar_3(long long& time_me)
         else
         {
                 time_me = time/58000;
+		sonar_three_reads.insert(sonar_three_reads.begin(),time_me);
                 printf("sonar_3 Read number: %lld\n", time_me);
         }
         fclose(file);
@@ -275,24 +316,44 @@ long long sonar_3_value = -1;
 //while((sonar_1_value <= 0 || sonar_1_value >= 15) && (sonar_2_value <= 0 || sonar_2_value >= 15) && (sonar_3_value <= 0 || sonar_3_value >= 15))
 
 long long x = 50000;
+
+bool too_close_one = 0;
+bool too_close_two = 0;
+bool too_close_three = 0;
+
 while(x > 1)
 {
 prompt_sonar(gpio);
-std::cout << "1\n";
+
 read_sonar_1(sonar_1_value);
-std::cout << "2\n";
+too_close_one = average_close(sonar_one_reads);
+
 read_sonar_2(sonar_2_value);
-std::cout << "3\n";
+too_close_two = average_close(sonar_two_reads);
+
 read_sonar_3(sonar_3_value);
-std::cout << "4\n";
-//sleep(1);
+too_close_three = average_close(sonar_three_reads);
+
 sonar_1_value = sonar_1_value/58000;
 sonar_2_value = sonar_2_value/58000;
 sonar_3_value = sonar_3_value/58000;
-std::cout << "\nsonar 1 value: " << sonar_1_value;
-std::cout << "\nsonar 2 value: " << sonar_2_value;
-std::cout << "\nsonar 3 value: " << sonar_3_value;
-std::cout << "\nx";
+
+if(too_close_one)
+{
+	std::cout << "sonar_one" << std::endl;
+}
+if(too_close_two)
+{
+        std::cout << "sonar_two" << std::endl;
+}
+if(too_close_three)
+{
+        std::cout << "sonar_three" << std::endl;
+}
+//std::cout << "\nsonar 1 value: " << sonar_1_value;
+//std::cout << "\nsonar 2 value: " << sonar_2_value;
+//std::cout << "\nsonar 3 value: " << sonar_3_value;
+//std::cout << "\nx";
 x--;
 }
 
